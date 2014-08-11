@@ -3,23 +3,21 @@ package pgentity
 import anorm.RowParser
 
 object pg_entity {
-  case class PgField(name: String, annotation: Option[String] = None)
+  case class PgField(name: String, annotation: Option[String] = None, isPk: Boolean = false)
 
   trait PgEntity[A] {
     def tableName: String
-    def primaryKeys: List[PgField]
     def columns: List[PgField]
-    def columnList(prefix: Option[String]) = {
-      val p = prefix.getOrElse(tableName + ".")
-      columns.map(p + _.name).mkString(", ")
-    }
     def parser(prefix: String): RowParser[A]
   }
 
+  def columnList[A](prefix: Option[String])(implicit ev: PgEntity[A]) = {
+    val p = prefix.getOrElse(ev.tableName + ".")
+    ev.columns.map(p + _.name).mkString(", ")
+  }
   def tableName[A](implicit ev: PgEntity[A]) = ev.tableName
-  def primaryKeys[A](implicit ev: PgEntity[A]) = ev.primaryKeys
+  def primaryKeys[A](implicit ev: PgEntity[A]) = ev.columns.filter(_.isPk)
   def columns[A](implicit ev: PgEntity[A]) = ev.columns
-  def columnList[A](prefix: Option[String] = None)(implicit ev: PgEntity[A]) = ev.columnList(prefix)
 
   def selectSQL[A](implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
@@ -48,7 +46,7 @@ object pg_entity {
     val updates = columns.map(c =>
       c.name + " = " + "{" + c.name + "}" + (c.annotation map(a => "::" + a) getOrElse "")
     ).mkString(", ")
-    val pkClause = ev.primaryKeys.map { case PgField(pk, _) =>
+    val pkClause = primaryKeys[A].map { case PgField(pk, _, _) =>
       s"$pk = {$pk}"
     }.mkString("", " and ", "")
     s"UPDATE $tablename SET $updates WHERE $pkClause"
@@ -56,7 +54,7 @@ object pg_entity {
 
   def deleteSQL[A](implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
-    val pkClause = ev.primaryKeys.map { case PgField(pk, _) =>
+    val pkClause = primaryKeys[A].map { case PgField(pk, _, _) =>
       s"$pk = {$pk}"
     }.mkString("", " and ", "")
     s"DELETE FROM $tablename WHERE $pkClause"
