@@ -42,7 +42,7 @@ object pg_entity {
 
   def updateSQL[A](ignored: List[String] = List())(implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
-    val columns = ev.columns.tail.filterNot(c => ignored.contains(c.name))
+    val columns = ev.columns.filterNot(c => c.isPk || ignored.contains(c.name))
     val updates = columns.map(c =>
       c.name + " = " + "{" + c.name + "}" + (c.annotation map(a => "::" + a) getOrElse "")
     ).mkString(", ")
