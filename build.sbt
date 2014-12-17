@@ -6,7 +6,10 @@ scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "anorm" % "2.3.2",
-  "org.specs2" %% "specs2" % "2.4" % "test"
+  "org.specs2" %% "specs2" % "2.4" % "test",
+  "org.scalaz" %% "scalaz-core" % "7.1.0",
+  "com.chuusai" %% "shapeless" % "2.0.0",
+  "default" % "scala-sql-parser_2.10" % "0.1-SNAPSHOT" % Test
 )
 
 scalacOptions ++= Seq(
