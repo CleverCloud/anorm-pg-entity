@@ -65,6 +65,10 @@ Work in progress
 The idea is to use `shapeless.Generic` to automatically derive the `PgEntity`
 instance from a case class.
 
+Since I'm a total newbie wrt shapeless, I rely heavily on the patience of
+[@skaalf](https://twitter.com/skaalf) and a few others (@milessabin,
+@mandubian, and @alexarchambault).
+
 ## Build
 
     sbt compile

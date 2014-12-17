@@ -1,3 +1,7 @@
+// Code shamelessly copy-pasted from this gist:
+// https://gist.github.com/jto/7eb761fc3a0a85116aea
+// Courtesy of @skaalf
+
 package pgentity.automagic
 
 import shapeless._
