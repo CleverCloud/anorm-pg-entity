@@ -71,6 +71,7 @@ instance from a case class.
 
 Please note that anorm PG Entities depends on
 [scala-sql-parser](https://github.com/stephentu/scala-sql-parser)
+**for the tests only**.
 
-**for the tests only**, which is not released on a repo yet, you have to
+Scala-SQL-Parser is not released on a repo yet, you have to
 `publish-local` it beforehand.
