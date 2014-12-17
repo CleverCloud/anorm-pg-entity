@@ -15,7 +15,7 @@ object Values {
   )
 
   implicit val DummyTablePgEntity = new PgEntity[DummyTable] {
-    val tableName = "dummy-table"
+    val tableName = "dummy_table"
     val columns = List(PgField("dummy_table_id", Some("UUID")), PgField("name"), PgField("number"))
     def parser(prefix: String) = {
       get[UUID](prefix + "dummy_table_id") ~
@@ -31,8 +31,8 @@ class PgEntitySpec extends mutable.Specification with ScalaCheck {
       val columns = columnList[Values.DummyTable](None).split(",").toList.map(_.trim)
 
       columns.forall({ c =>
-        c.startsWith("dummy-table.")
-      }) must_== true
+        c must startWith("dummy_table.")
+      })
     }
 
     "prefix fields with the given prefix" in {
