@@ -40,8 +40,8 @@ class PgEntitySpec extends mutable.Specification with ScalaCheck {
       val columns = columnList[Values.DummyTable](Some(prefix)).split(",").toList.map(_.trim)
 
       columns.forall({ c =>
-        c.startsWith("renamed_column_")
-      }) must_== true
+        c must startWith("renamed_column_")
+      })
     }
 
     "include all fields in insert statement" in {
