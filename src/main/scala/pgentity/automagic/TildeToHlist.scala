@@ -36,5 +36,3 @@ object ToHlist extends LowPriorityToHlist {
   def hlist[A, B](p: A ~ B)(implicit u: ToHlist[A ~ B]) = u(p)
 }
 
-
-

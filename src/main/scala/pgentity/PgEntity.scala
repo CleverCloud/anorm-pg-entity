@@ -57,7 +57,6 @@ object pg_entity {
   // The fields composing the primary key
   def primaryKeys[A](implicit ev: PgEntity[A]): List[PgField] = ev.columns.filter(_.isPk)
 
-
   // Body of a SELECT query with no WHERE clause.
   def selectSQL[A](implicit ev: PgEntity[A]): String = {
     val tablename = ev.tableName

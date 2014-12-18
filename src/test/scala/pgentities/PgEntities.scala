@@ -11,16 +11,15 @@ object Values {
   case class DummyTable(
     id: UUID,
     name: String,
-    number: Int
-  )
+    number: Int)
 
   implicit val DummyTablePgEntity = new PgEntity[DummyTable] {
     val tableName = "dummy_table"
     val columns = List(PgField("dummy_table_id", Some("UUID")), PgField("name"), PgField("number"))
     def parser(prefix: String) = {
       get[UUID](prefix + "dummy_table_id") ~
-      str(prefix + "name") ~
-      int(prefix + "number") map { case (id ~ name ~ number) => DummyTable(id, name, number) }
+        str(prefix + "name") ~
+        int(prefix + "number") map { case (id ~ name ~ number) => DummyTable(id, name, number) }
     }
   }
 }
