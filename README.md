@@ -36,11 +36,16 @@ Automagic instance derivation is in the works. Stay tuned.
 ### Regular use
 
 ```scala
+
+// Data Definition
+
 case class DummyTable(
   id: UUID, // Please refrain from using sequential IDs :-)
   name: String,
   number: Int
 )
+
+// Minimal boilerplate
 
 implicit val DummyTablePgEntity = new PgEntity[DummyTable] {
   // The name of the table
@@ -56,6 +61,13 @@ implicit val DummyTablePgEntity = new PgEntity[DummyTable] {
     int(prefix + "number") map { case (id ~ name ~ number) => DummyTable(id, name, number) }
   }
 }
+
+// Enjoy
+
+val values = DB.withConnection { implicit c =>
+    SQL(selectSQL[DummyTable]).as(parser[DummyTable]().*).toList
+}
+
 ```
 
 ### Automagic use
