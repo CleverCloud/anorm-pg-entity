@@ -1,8 +1,10 @@
-name := """sbt-entities"""
+organization := "name.delafargue"
 
-version := "1.0-SNAPSHOT"
+name := """anorm-pg-entity"""
 
-scalaVersion := "2.11.1"
+version := "0.1-SNAPSHOT"
+
+scalaVersion := "2.11.4"
 
 libraryDependencies ++= Seq(
   "com.typesafe.play" %% "anorm" % "2.3.2",
