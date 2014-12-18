@@ -7,7 +7,15 @@ object pg_entity {
   // You can optionally provide a type annotation for types entered as a
   // string in the query (eg like UUID or JSON)
   // A field can be part of the entity's private key.
-  case class PgField(name: String, annotation: Option[String] = None, isPk: Boolean = false)
+  case class PgField(name: String, annotation: Option[String] = None, isPk: Boolean = false) {
+    val annotationTag = annotation map ("::" + _) getOrElse ""
+    val insertPlaceHolder = {
+      s"{$name}$annotationTag"
+    }
+    val updatePlaceHolder = {
+      s"$name={$name}$annotationTag"
+    }
+  }
 
   // Type Class modelling the mapping between an entity and its DB
   // representation
@@ -61,7 +69,7 @@ object pg_entity {
   // The column names are prefixed with the table names to avoid ambiguities
   def prefixedSelectSQL[A](implicit ev: PgEntity[A]): String = {
     val tablename = ev.tableName
-    val columns = ev.columns.map(c => tablename + "." + c.name).mkString(",")
+    val columns = ev.columns.map(c => s"$tablename.${c.name}").mkString(",")
     s"select $columns from $tablename"
   }
 
@@ -69,9 +77,7 @@ object pg_entity {
   def insertSQL[A](implicit ev: PgEntity[A]): String = {
     val tablename = ev.tableName
     val columns = ev.columns.map(_.name).mkString("(", ",", ")")
-    val values = ev.columns.map(c =>
-      "{" + c.name + "}" + (c.annotation map(a => "::" + a) getOrElse "")
-    ).mkString("(", ",", ")")
+    val values = ev.columns.map(_.insertPlaceHolder).mkString("(", ",", ")")
     s"insert into $tableName $columns values $values"
   }
 
@@ -82,11 +88,10 @@ object pg_entity {
   def updateSQL[A](ignored: List[String] = List())(implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
     val columns = ev.columns.filterNot(c => c.isPk || ignored.contains(c.name))
-    val updates = columns.map(c =>
-      c.name + " = " + "{" + c.name + "}" + (c.annotation map(a => "::" + a) getOrElse "")
-    ).mkString(", ")
-    val pkClause = primaryKeys[A].map { case PgField(pk, _, _) =>
-      s"$pk = {$pk}"
+    val updates = columns.map(_.updatePlaceHolder).mkString(", ")
+    val pkClause = primaryKeys[A].map {
+      case PgField(pk, _, _) =>
+        s"$pk = {$pk}"
     }.mkString("", " and ", "")
     s"UPDATE $tablename SET $updates WHERE $pkClause"
   }
@@ -96,8 +101,9 @@ object pg_entity {
   // clause.
   def deleteSQL[A](implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
-    val pkClause = primaryKeys[A].map { case PgField(pk, _, _) =>
-      s"$pk = {$pk}"
+    val pkClause = primaryKeys[A].map {
+      case PgField(pk, _, _) =>
+        s"$pk = {$pk}"
     }.mkString("", " and ", "")
     s"DELETE FROM $tablename WHERE $pkClause"
   }
