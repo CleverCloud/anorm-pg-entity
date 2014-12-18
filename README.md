@@ -26,6 +26,14 @@ Unlike other tools, Anorm PG Entities separates your model from the mapping to
 the database, which gives you flexibility. No need to put annotations
 everywhere, you can override everything you want.
 
+## Using it
+
+Anorm PG Entities is published for scala 2.11
+
+    resolvers += "Clever Cloud Repository" at "http://maven.clever-cloud.com"
+
+    libraryDependencies += "name.delafargue" %% "anorm-pg-entity" % "0.1-SNAPSHOT"
+
 ## Show me the code
 
 For now you have to write the `PgEntity` instance yourself. Don't worry, it's
@@ -37,6 +45,8 @@ Automagic instance derivation is in the works. Stay tuned.
 
 ```scala
 
+import pgentity._
+
 // Data Definition
 
 case class DummyTable(
@@ -45,27 +55,29 @@ case class DummyTable(
   number: Int
 )
 
-// Minimal boilerplate
+object FunStuff {
+  // Minimal boilerplate
 
-implicit val DummyTablePgEntity = new PgEntity[DummyTable] {
-  // The name of the table
-  val tableName = "dummy_table"
+  implicit val DummyTablePgEntity = new PgEntity[DummyTable] {
+    // The name of the table
+    val tableName = "dummy_table"
 
-  // The columns
-  val columns = List(PgField("dummy_table_id", Some("UUID")), PgField("name"), PgField("number"))
+    // The columns
+    val columns = List(PgField("dummy_table_id", Some("UUID")), PgField("name"), PgField("number"))
 
-  // The parser
-  def parser(prefix: String) = {
-    get[UUID](prefix + "dummy_table_id") ~
-    str(prefix + "name") ~
-    int(prefix + "number") map { case (id ~ name ~ number) => DummyTable(id, name, number) }
+    // The parser
+    def parser(prefix: String) = {
+      get[UUID](prefix + "dummy_table_id") ~
+      str(prefix + "name") ~
+      int(prefix + "number") map { case (id ~ name ~ number) => DummyTable(id, name, number) }
+    }
   }
-}
 
-// Enjoy
+  // Enjoy
 
-val values = DB.withConnection { implicit c =>
-    SQL(selectSQL[DummyTable]).as(parser[DummyTable]().*).toList
+  val values = DB.withConnection { implicit c =>
+      SQL(selectSQL[DummyTable]).as(parser[DummyTable]().*).toList
+  }
 }
 
 ```
