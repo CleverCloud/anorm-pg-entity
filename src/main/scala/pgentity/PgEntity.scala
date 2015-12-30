@@ -126,10 +126,7 @@ object pg_entity {
     val tablename = ev.tableName
     val columns = ev.columns.filterNot(c => c.isPk || ignored.contains(c.name))
     val updates = columns.map(_.updatePlaceHolder).mkString(", ")
-    val pkClause = primaryKeys[A].map {
-      case PgField(pk, _, _) =>
-        s"$pk = {$pk}"
-    }.mkString("", " and ", "")
+    val pkClause = primaryKeys[A].map(_.updatePlaceHolder).mkString("", " and ", "")
     s"UPDATE $tablename SET $updates WHERE $pkClause"
   }
 
@@ -142,10 +139,7 @@ object pg_entity {
    */
   def deleteSQL[A](implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
-    val pkClause = primaryKeys[A].map {
-      case PgField(pk, _, _) =>
-        s"$pk = {$pk}"
-    }.mkString("", " and ", "")
+    val pkClause = primaryKeys[A].map(_.updatePlaceHolder).mkString("", " and ", "")
     s"DELETE FROM $tablename WHERE $pkClause"
   }
 }
