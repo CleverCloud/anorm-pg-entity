@@ -8,7 +8,7 @@ import anorm.SqlStatementParser.parse
 import magnolia._
 
 object Values {
-  case class DummyTable(id: UUID, name: String, number: Int)
+  case class DummyTable(dummyTableId: UUID, name: String, number: Int)
 
   implicit val DummyTablePgEntity = PgEntity.gen[DummyTable]
 

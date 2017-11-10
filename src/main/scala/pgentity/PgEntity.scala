@@ -98,7 +98,7 @@ object pg_entity {
       val tn = camelToSnake(tableName)
       val fn = camelToSnake(fieldName)
       if (fn == "id" || fn == s"${tn}_id") {
-        PgField(s"${tn}_id", Some(fieldType), true)
+        PgField(fn, Some(fieldType), true)
       } else {
         PgField(fieldName, Some(fieldType))
       }
