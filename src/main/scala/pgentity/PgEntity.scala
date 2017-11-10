@@ -51,6 +51,33 @@ object pg_entity {
       * @param prefix The prefix prepended to every field name
       */
     def parser(prefix: String): RowParser[A]
+
+    def withTableName(s: String): PgEntity[A] = {
+      val self = this
+      new PgEntity[A] {
+        def tableName = s
+        def columns = self.columns
+        def parser(prefix: String) = self.parser(prefix)
+      }
+    }
+
+    def withColumns(cs: List[PgField]): PgEntity[A] = {
+      val self = this
+      new PgEntity[A] {
+        def tableName = self.tableName
+        def columns = cs
+        def parser(prefix: String) = self.parser(prefix)
+      }
+    }
+
+    def withParser(p: String => RowParser[A]): PgEntity[A] = {
+      val self = this
+      new PgEntity[A] {
+        def tableName = self.tableName
+        def columns = self.columns
+        def parser(prefix: String) = p(prefix)
+      }
+    }
   }
 
   object PgEntity {

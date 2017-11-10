@@ -62,4 +62,14 @@ class PgEntitySpec extends FlatSpec with Matchers {
 
     parsedPlaceholders should contain theSameElementsAs (primaryKeys[Values.DummyTable].map(_.name))
   }
+
+  "tableName override" should "override table name" in {
+    val name = implicitly[PgEntity[Values.DummyTable]].withTableName("yolo").tableName
+    name should be("yolo")
+  }
+
+  "fields override" should "override fields" in {
+    val fields = implicitly[PgEntity[Values.DummyTable]].withColumns(Nil).columns
+    fields should be(Nil)
+  }
 }
