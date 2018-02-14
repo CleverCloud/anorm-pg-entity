@@ -1,25 +1,22 @@
-organization := "name.delafargue"
+lazy val root = (project in file(".")).
+  settings(
+    inThisBuild(List(
+      organization := "name.delafargue",
+      scalaVersion := "2.11.11",
+      version      := "0.2.0-SNAPSHOT",
+      crossScalaVersions := Seq("2.12.4")
+    )),
+    name := "AnormPgEntity",
+    libraryDependencies ++= Seq(
+      "com.typesafe.play" %% "anorm" % "2.5.3",
+      "com.propensive" %% "magnolia" % "0.5.0",
+      "org.scalatest" %% "scalatest" % "3.0.3" % Test
+    ),
+    scalacOptions ++= Seq(
+      "-feature", "-unchecked", "-Xlint", "-Ywarn-inaccessible",
+      "-Ywarn-nullary-override", "-Ywarn-nullary-unit", "-Ywarn-numeric-widen",
+      "-Ywarn-value-discard", "-language:postfixOps"
+    )
+  )
 
-name := """anorm-pg-entity"""
 
-version := "0.1-SNAPSHOT"
-
-scalaVersion := "2.11.4"
-
-libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "anorm" % "2.3.2",
-  "org.specs2" %% "specs2" % "2.4" % "test",
-  "org.scalaz" %% "scalaz-core" % "7.1.0",
-  "com.chuusai" %% "shapeless" % "2.0.0",
-  "default" % "scala-sql-parser_2.10" % "0.1-SNAPSHOT" % Test
-)
-
-scalacOptions ++= Seq(
-  "-feature", "-unchecked", "-Xlint", "-Ywarn-inaccessible",
-  "-Ywarn-nullary-override", "-Ywarn-nullary-unit", "-Ywarn-numeric-widen",
-  "-Ywarn-value-discard", "-language:postfixOps"
-)
-
-scalacOptions in Test ++= Seq("-Yrangepos")
-
-defaultScalariformSettings
