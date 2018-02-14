@@ -52,7 +52,7 @@ object pg_entity {
    * @return a string with the column names separated by commas
    */
   def columnList[A](prefix: Option[String])(implicit ev: PgEntity[A]): String = {
-    val p = prefix.getOrElse(ev.tableName + ".")
+    val p = prefix.getOrElse(s""""${ev.tableName}".""")
     ev.columns.map(p + _.name).mkString(", ")
   }
 
@@ -85,7 +85,7 @@ object pg_entity {
   def selectSQL[A](implicit ev: PgEntity[A]): String = {
     val tablename = ev.tableName
     val columns = ev.columns.map(_.name).mkString(",")
-    s"select $columns from $tablename"
+    s"""select $columns from "$tablename""""
   }
 
   /**
@@ -96,8 +96,8 @@ object pg_entity {
    */
   def prefixedSelectSQL[A](implicit ev: PgEntity[A]): String = {
     val tablename = ev.tableName
-    val columns = ev.columns.map(c => s"$tablename.${c.name}").mkString(",")
-    s"select $columns from $tablename"
+    val columns = ev.columns.map(c => s""""$tablename".${c.name}""").mkString(",")
+    s"""select $columns from "$tablename""""
   }
 
   /**
@@ -109,7 +109,7 @@ object pg_entity {
     val tablename = ev.tableName
     val columns = ev.columns.map(_.name).mkString("(", ",", ")")
     val values = ev.columns.map(_.insertPlaceHolder).mkString("(", ",", ")")
-    s"insert into $tableName $columns values $values"
+    s"""insert into "$tableName" $columns values $values"""
   }
 
   /**
@@ -126,8 +126,9 @@ object pg_entity {
     val tablename = ev.tableName
     val columns = ev.columns.filterNot(c => c.isPk || ignored.contains(c.name))
     val updates = columns.map(_.updatePlaceHolder).mkString(", ")
-    val pkClause = primaryKeys[A].map(_.updatePlaceHolder).mkString("", " and ", "")
-    s"UPDATE $tablename SET $updates WHERE $pkClause"
+    val pkClause =
+      primaryKeys[A].map(_.updatePlaceHolder).mkString("", " and ", "")
+    s"""UPDATE "$tablename" SET $updates WHERE $pkClause"""
   }
 
   /**
@@ -139,7 +140,8 @@ object pg_entity {
    */
   def deleteSQL[A](implicit ev: PgEntity[A]) = {
     val tablename = ev.tableName
-    val pkClause = primaryKeys[A].map(_.updatePlaceHolder).mkString("", " and ", "")
-    s"DELETE FROM $tablename WHERE $pkClause"
+    val pkClause =
+      primaryKeys[A].map(_.updatePlaceHolder).mkString("", " and ", "")
+    s"""DELETE FROM "$tablename" WHERE $pkClause"""
   }
 }

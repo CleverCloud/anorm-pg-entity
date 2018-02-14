@@ -31,7 +31,7 @@ class PgEntitySpec extends mutable.Specification with ScalaCheck {
       val columns = columnList[Values.DummyTable](None).split(",").toList.map(_.trim)
 
       columns.forall({ c =>
-        c must startWith("dummy_table.")
+        c must startWith(""""dummy_table".""")
       })
     }
 
