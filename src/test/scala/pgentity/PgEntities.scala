@@ -23,7 +23,7 @@ class PgEntitySpec extends FlatSpec with Matchers {
   "columnList" should "automatically prefix fields with the table name" in {
     val columns =
       columnList[Values.DummyTable](None).split(",").toList.map(_.trim)
-    all(columns) should startWith("dummy_table.")
+    all(columns) should startWith(""""dummy_table".""")
   }
   "columnList" should "prefix fields with the given prefix" in {
     val prefix = "renamed_column_"
@@ -33,12 +33,12 @@ class PgEntitySpec extends FlatSpec with Matchers {
     all(columns) should startWith("renamed_column_")
   }
 
-  "SELECT statement" should "be exactly what I want" in {
+  "INSERT statement" should "be exactly what I want" in {
     val statement = insertSQL[Values.DummyTable]
     println(parse(statement))
 
     statement should be(
-      """insert into dummy_table (dummy_table_id,name,number) values ({dummy_table_id}::uuid,{name}::text,{number}::number)""")
+      """insert into "dummy_table" (dummy_table_id,name,number) values ({dummy_table_id}::uuid,{name}::text,{number}::number)""")
   }
 
   "INSERT statement" should "include all fields" in {
