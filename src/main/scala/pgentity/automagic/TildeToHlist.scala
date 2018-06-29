@@ -4,14 +4,9 @@
 
 package pgentity.automagic
 
+import anorm._
 import shapeless._
 import shapeless.ops.hlist._
-import record._
-import syntax.singleton._
-import ops.record._
-
-import anorm._
-import anorm.SqlParser._
 
 trait ToHlist[S] {
   type Out <: HList

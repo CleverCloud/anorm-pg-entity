@@ -6,6 +6,7 @@ import pgentity.pg_entity._
 import anorm._
 import anorm.SqlParser._
 import anorm.SqlStatementParser.parse
+import scala.util.{Success,Failure}
 
 object Values {
   case class DummyTable(
@@ -45,16 +46,18 @@ class PgEntitySpec extends mutable.Specification with ScalaCheck {
 
     "include all fields in insert statement" in {
       val statement = insertSQL[Values.DummyTable]
-      val (_, parsedPlaceholders) = parse(statement)
-
-      parsedPlaceholders must containTheSameElementsAs(Values.DummyTablePgEntity.columns.map(_.name))
+      parse(statement) match {
+        case Success(stmt) => stmt.names must containTheSameElementsAs(Values.DummyTablePgEntity.columns.map(_.name))
+        case Failure(e) => throw e
+      }
     }
 
     "include all fields in update statement" in {
       val statement = updateSQL[Values.DummyTable]()
-      val (_, parsedPlaceholders) = parse(statement)
-
-      parsedPlaceholders must containTheSameElementsAs(Values.DummyTablePgEntity.columns.map(_.name))
+      parse(statement) match {
+        case Success(stmt) => stmt.names must containTheSameElementsAs(Values.DummyTablePgEntity.columns.map(_.name))
+        case Failure(e) => throw e
+      }
     }
   }
 }

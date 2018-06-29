@@ -1,15 +1,12 @@
 package pgentity.automagic
 
-import shapeless._
-import shapeless.ops.hlist._
-import record._
-import syntax.singleton._
-import ops.record._
-
-import pgentity.automagic.ToHlist._
-
 import anorm._
 import anorm.SqlParser._
+import shapeless._
+import shapeless.labelled._
+import shapeless.ops.record._
+
+import pgentity.automagic.ToHlist._
 
 // Automatically derive RowParser[A] from a case class thanks to shapeless
 // Generic support.
@@ -37,10 +34,11 @@ object shape {
     }
 
     implicit def hconsFieldToParser[K <: Symbol, A, B <: HList](
-      implicit w: FieldToParser[B], // Transform the tail
+      implicit
+      w: FieldToParser[B], // Transform the tail
       c: Column[A] // Make sure the type is parseable by anorm
-      ): Aux[FieldType[K, A] :: B, (Symbol => RowParser[A]) :: w.Out] =
-      new FieldToParser[FieldType[K, A]:: B] {
+    ): Aux[FieldType[K, A] :: B, (Symbol => RowParser[A]) :: w.Out] =
+      new FieldToParser[FieldType[K, A] :: B] {
         type Out = (Symbol => RowParser[A]) :: w.Out
         def apply(): Out = { (x: Symbol) => get[A](x.name) } :: w()
       }
