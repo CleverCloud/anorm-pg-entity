@@ -10,7 +10,7 @@ lazy val root = (project in file(".")).
       organization := "name.delafargue",
       scalaVersion := "2.12.6",
 		crossScalaVersions := Seq("2.11.12","2.12.6"),
-      version      := "0.1.0-SNAPSHOT"
+      version      := "0.1.0"
     )),
     name := "AnormPgEntity",
     libraryDependencies ++= Seq(
@@ -26,5 +26,8 @@ lazy val root = (project in file(".")).
       "-Ywarn-value-discard", "-language:postfixOps"
     ),
     publishTo := Some("Artifactory Realm" at "https://" + ARTIFACTORY_ADDON_HOST + "/" + ARTIFACTORY_SBT_RELEASE_REPOSITORY),
-    credentials += Credentials("Artifactory Realm", ARTIFACTORY_ADDON_HOST, ARTIFACTORY_SBT_RELEASE_USER, ARTIFACTORY_SBT_RELEASE_PASSWORD)
+    credentials += Credentials("Artifactory Realm", ARTIFACTORY_ADDON_HOST, ARTIFACTORY_SBT_RELEASE_USER, ARTIFACTORY_SBT_RELEASE_PASSWORD),
+    bintrayOrganization := Some("clevercloud"),
+    bintrayRepository := "maven",
+    licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
   )
