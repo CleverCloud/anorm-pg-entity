@@ -6,7 +6,7 @@ lazy val root = (project in file(".")).
 		crossScalaVersions := Seq("2.11.12","2.12.6"),
       version      := "0.1.0-SNAPSHOT"
     )),
-    name := "AnormPgEntity",
+    name := "anorm-pg-entity",
     libraryDependencies ++= Seq(
       "org.playframework.anorm" %% "anorm" % "2.6.2",
 		"org.scalaz" %% "scalaz-core" % "7.2.25",
